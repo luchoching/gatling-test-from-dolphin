@@ -14,6 +14,9 @@ $ sbt "testOnly computerdatabase.advanced.AdvancedSimulationStep05
 
 Street Test (Concentor + ACE): 
 
+First change the accessToken value at `ReqMsg.scala`, then: 
+
+
 ```
 $ sbt "testOnly fromdolphin.BasicSimulation"
 ```
