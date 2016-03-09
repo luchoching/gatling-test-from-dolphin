@@ -1,3 +1,20 @@
+Official demo stress tests: 
+
 ```
-git clone https://github.com/gatling/gatling-sbt-plugin-demo.git && cd gatling-sbt-plugin-demo
+$ sbt "testOnly computerdatabase.BasicSimulation"
+
+$ sbt "testOnly computerdatabase.advanced.AdvancedSimulationStep01
+$ sbt "testOnly computerdatabase.advanced.AdvancedSimulationStep02
+$ sbt "testOnly computerdatabase.advanced.AdvancedSimulationStep03
+$ sbt "testOnly computerdatabase.advanced.AdvancedSimulationStep04
+$ sbt "testOnly computerdatabase.advanced.AdvancedSimulationStep05
+
 ```
+
+
+Street Test (Concentor + ACE): 
+
+```
+$ sbt "testOnly fromdolphin.BasicSimulation"
+```
+

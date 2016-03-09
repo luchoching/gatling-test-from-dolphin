@@ -18,7 +18,8 @@ object ReqMsgs {
     "virtual_gift_pixel_size" -> 64
   )
 
-  def getReqMsg(packetType: Int, fields: JsValue) = {
+  def getReqMsg(packetType: Int, fields: JsValue = Json.obj()) = {
+    transactionId += 1
     Json.obj(
       "createTime" -> java.lang.System.currentTimeMillis(),
       "fields" -> fields,
@@ -30,4 +31,6 @@ object ReqMsgs {
   }
 
   def getCreateSessionMsg = getReqMsg(211, createSessionMsg)
+
+  def getPingMsg = getReqMsg(2)
 }
