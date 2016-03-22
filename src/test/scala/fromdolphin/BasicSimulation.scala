@@ -26,8 +26,6 @@ class BasicSimulation extends Simulation {
       .pause(10)
 
       .exec(ws("Close WS").close)
-
-    println(s"ReqMsgs.getCreateSessionMsg.toString(): ${ReqMsgs.getCreateSessionMsg.toString()}")
   }
 
   val httpConf = http
