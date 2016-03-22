@@ -9,13 +9,13 @@ object ReqMsgs {
   var transactionId = 1
 
   val createSessionMsg = Json.obj(
-    "2" -> 5,
-    "5" -> 5,
-    "3" -> "",
-    "21" ->  accessToken,
-    "10" -> 16,
-    "19" -> 200,
-    "18" -> 64
+    "2" -> 5,                 // client_type or client_version
+    "5" -> 5,                 // client_type or client_version
+    "3" -> "",                // session_id
+    "21" ->  accessToken,     // access_token
+    "10" -> 16,               // font_height
+    "19" -> 200,              // sticker_pixel_size
+    "18" -> 64                // virtual_gift_pixel_size
   )
 
   def getReqMsg(packetType: Int, fields: JsValue = Json.obj()) = {
