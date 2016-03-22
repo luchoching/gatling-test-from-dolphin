@@ -26,6 +26,8 @@ class BasicSimulation extends Simulation {
       .pause(10)
 
       .exec(ws("Close WS").close)
+
+    println(s"ReqMsgs.getCreateSessionMsg.toString(): ${ReqMsgs.getCreateSessionMsg.toString()}")
   }
 
   val httpConf = http
@@ -44,5 +46,5 @@ class BasicSimulation extends Simulation {
   // Single user
   //setUp(scn.inject(atOnceUsers(1)).protocols(httpConf))
 
-  setUp(scn.inject(rampUsers(1000) over (60 seconds)).protocols(httpConf))
+  setUp(scn.inject(rampUsers(10) over (20 seconds)).protocols(httpConf))
 }
