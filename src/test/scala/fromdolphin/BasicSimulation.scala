@@ -6,21 +6,57 @@ import scala.concurrent.duration._
 
 class BasicSimulation extends Simulation {
 
-  object CreateSession {
+  object OnlyOnePrivateChat {
+    def conWs() = exec(ws("Conn WS").open("/"))
+
+    def closeWs() = exec(ws("Close WS").close)
+
+    def createSession() = exec(ws("Create testfriend888 Session")
+      .sendText(ReqMsgs.createSession("2fa78f7f3a844c2dbf401814390f6dec83cde93182dc4afeb3709a5a643735aa").toString()))
+      .pause(10)
+
+    def getMsgs() = {
+      exec(ws("Start Private Chat(get messages)")
+        .sendText(ReqMsgs.createPrivateChat("testfriend300").toString()))
+    }
+
+    def sendMsg = exec(ws("Send Private Message")
+      .sendText(ReqMsgs.privateMsg("testfriend888","testfriend300").toString()))
+
+    def repeatSendMsg() = repeat(5) { sendMsg.pause(5) }
+
+    val init = exec(conWs(), createSession(), getMsgs(), repeatSendMsg(), closeWs())
+  }
+
+
+  object PrivateChat {
 
     val tokens = csv("tokens.csv").random
+    val users = csv("users.csv").random
 
-    val init =
-      exec(ws("Conn WS").open("/"))
+    def conWs() = exec(ws("Conn WS").open("/"))
 
-//      .exec(ws("Ping")
-//      .sendText(ReqMsgs.getPingMsg.toString()))
+    def closeWs() = exec(ws("Close WS").close)
 
-      .feed(tokens)
+    def createSession() = feed(tokens)
       .exec(ws("Create User Segssion")
-      .sendText(ReqMsgs.getCreateSessionMsg("${token}").toString()))
+      .sendText(ReqMsgs.createSession("${token}").toString()))
+      .pause(10)
 
-      .exec(ws("Close WS").close)
+    def getMsgs() = {
+      feed(users)
+      .exec(ws("Start Private Chat(get messages)")
+      .sendText(ReqMsgs.createPrivateChat("${user}").toString()))
+      .pause(10)
+  }
+
+    def repeatSendMsg = repeat(5) { sendMsg }
+
+    def sendMsg() = exec(ws("Send Private Message")
+      .sendText(ReqMsgs.privateMsg("${user}","${user}").toString()))
+      .pause(10)
+
+    val init = exec(conWs(), createSession(), getMsgs(), sendMsg(), closeWs())
   }
 
   val httpConf = http
@@ -34,10 +70,11 @@ class BasicSimulation extends Simulation {
     .inferHtmlResources(BlackList(""".*\.css""", """.*\.ico"""), WhiteList())
 
 
-  val scn = scenario("Test Chat (Stargate + Mercury)").exec(CreateSession.init)
+  val scn = scenario("Test Chat (Stargate + Mercury)").exec(PrivateChat.init)
+  val scn2 = scenario("Test Chat (Stargate + Mercury)").exec(OnlyOnePrivateChat.init)
 
-  setUp(scn.inject(
-    atOnceUsers(100) //Injects a given number of users at once.
+  setUp(scn2.inject(
+    atOnceUsers(1) //Injects a given number of users at once.
     //rampUsers(1000) over (60 seconds) //  Injects a given number of users with a linear ramp over a given duration.
   ).protocols(httpConf))
 }
