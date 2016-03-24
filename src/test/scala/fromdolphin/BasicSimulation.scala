@@ -12,19 +12,15 @@ class BasicSimulation extends Simulation {
 
     val init =
       exec(ws("Conn WS").open("/"))
-      //.pause(5)
 
-      .exec(ws("Ping")
-      .sendText(ReqMsgs.getPingMsg.toString()))
-      //.pause(10)
+//      .exec(ws("Ping")
+//      .sendText(ReqMsgs.getPingMsg.toString()))
 
       .feed(tokens)
       .exec(ws("Create User Segssion")
-        .sendText(ReqMsgs.getCreateSessionMsg("${token}").toString()))
-      //.pause(10)
+      .sendText(ReqMsgs.getCreateSessionMsg("${token}").toString()))
 
       .exec(ws("Close WS").close)
-      //.pause(10)
   }
 
   val httpConf = http
