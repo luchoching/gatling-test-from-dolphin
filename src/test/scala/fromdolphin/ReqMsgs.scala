@@ -3,12 +3,11 @@ package fromdolphin
 import play.api.libs.json.{JsValue, Json}
 
 object ReqMsgs {
-
-  val accessToken = "d701e45abaea453c8075ff06c6b9593d0fda1eb9a0ee41e4aedad96daf7944e5"
-
+  
+  //Todo: need get tid?
   var transactionId = 1
 
-  val createSessionMsg = Json.obj(
+  def createSessionMsg(accessToken: String) = Json.obj(
     "2" -> 5,                 // client_type or client_version
     "5" -> 5,                 // client_type or client_version
     "3" -> "",                // session_id
@@ -27,7 +26,7 @@ object ReqMsgs {
     )
   }
 
-  def getCreateSessionMsg = getReqMsg(211, createSessionMsg)
+  def getCreateSessionMsg(accessToken: String) = getReqMsg(211, createSessionMsg(accessToken))
 
   def getPingMsg = getReqMsg(2)
 }

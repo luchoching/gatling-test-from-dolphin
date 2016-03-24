@@ -6,23 +6,21 @@ import scala.concurrent.duration._
 
 class BasicSimulation extends Simulation {
 
-//  object Init {
-//    val init = exec(http("request_1")
-//      .get("/"))
-//      .pause(7)
-//  }
+  object CreateSession {
 
-  object WsInit {
-    val wsInit =
+    val tokens = csv("tokens.csv").random
+
+    val init =
       exec(ws("Conn WS").open("/"))
       .pause(5)
 
-      .exec(ws("Create User Session")
-      .sendText(ReqMsgs.getCreateSessionMsg.toString()))
-      .pause(10)
-
       .exec(ws("Ping")
       .sendText(ReqMsgs.getPingMsg.toString()))
+      .pause(10)
+
+      .feed(tokens)
+      .exec(ws("Create User Session")
+        .sendText(ReqMsgs.getCreateSessionMsg("${token}").toString()))
       .pause(10)
 
       .exec(ws("Close WS").close)
@@ -39,10 +37,10 @@ class BasicSimulation extends Simulation {
     .inferHtmlResources(BlackList(""".*\.css""", """.*\.ico"""), WhiteList())
 
 
-  val scn = scenario("Test Chat from Dolphin").exec(WsInit.wsInit)
+  val scn = scenario("Test Chat (Stargate + Mercury)").exec(CreateSession.init)
 
-  // Single user
-  //setUp(scn.inject(atOnceUsers(1)).protocols(httpConf))
-
-  setUp(scn.inject(rampUsers(10) over (20 seconds)).protocols(httpConf))
+  setUp(scn.inject(
+    atOnceUsers(10) //Injects a given number of users at once.
+    //rampUsers(100) over (60 seconds) //  Injects a given number of users with a linear ramp over a given duration.
+  ).protocols(httpConf))
 }

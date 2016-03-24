@@ -11,18 +11,18 @@ object Tokens {
   def main(args: Array[String]): Unit = {
 
     val nums = 700 to 800 toList
-    // val users = nums map {num => "testfriend" + num.toString}
-
     val tokens = nums map {num => "testfriend" + num.toString} map getAuth
+    val lines = "token" :: tokens
 
     def printToFile(f: java.io.File)(op: java.io.PrintWriter => Unit) {
       val p = new java.io.PrintWriter(f)
       try { op(p) } finally { p.close() }
     }
 
-    printToFile(new File("tokens.txt")) { p =>
-      tokens foreach {token =>
-        if(!"".equals(token)) p.println(token)
+
+    printToFile(new File("tokens.csv")) { p =>
+      lines foreach {line =>
+        if(!"".equals(line)) p.println(line)
       }
     }
 
