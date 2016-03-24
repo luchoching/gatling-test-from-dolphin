@@ -12,10 +12,13 @@ $ sbt "testOnly computerdatabase.advanced.AdvancedSimulationStep05
 ```
 
 
-Street Test (Concentor + ACE): 
+#  Street Test (StartGate + Mercury): 
 
-First change the accessToken value at `ReqMsg.scala`, then: 
+User `sbt run` to generate access tokens file(`tokens.csv`). 
 
+Access tokens are made from testfriend100-999. 
+
+Then run test: 
 
 ```
 $ sbt "testOnly fromdolphin.BasicSimulation"

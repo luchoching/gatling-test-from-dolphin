@@ -10,22 +10,35 @@ object Tokens {
 
   def main(args: Array[String]): Unit = {
 
-    val nums = 700 to 800 toList
-    val tokens = nums map {num => "testfriend" + num.toString} map getAuth
-    val lines = "token" :: tokens
+    val nums = 100 to 999 toList
 
-    def printToFile(f: java.io.File)(op: java.io.PrintWriter => Unit) {
-      val p = new java.io.PrintWriter(f)
-      try { op(p) } finally { p.close() }
-    }
+    val users = nums map {num => "testfriend" + num.toString}
+    val userLines = "user" :: users
 
+    val tokens = users map getAuth
+    val tokenLines = "token" :: tokens
 
-    printToFile(new File("tokens.csv")) { p =>
-      lines foreach {line =>
-        if(!"".equals(line)) p.println(line)
+    // for private chat GET_MESSAGES
+    save(userLines, "users.csv")
+
+    // for CREATE_SESSION
+    save(tokenLines, "tokens.csv")
+  }
+
+  def printToFile(f: java.io.File)(op: java.io.PrintWriter => Unit) {
+    val p = new java.io.PrintWriter(f)
+    try { op(p) } finally { p.close() }
+  }
+
+  def save(source: List[Any], fileName: String) = {
+    printToFile(new File(fileName)) { p =>
+      source foreach {line =>
+        if(!"".equals(line)) {
+          println(line)
+          p.println(line)
+        }
       }
     }
-
   }
 
   def getAuth(userName: String) = {
@@ -42,6 +55,5 @@ object Tokens {
       case _ => ""
     }
   }
-
 }
 

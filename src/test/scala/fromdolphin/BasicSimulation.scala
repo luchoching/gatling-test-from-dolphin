@@ -12,18 +12,19 @@ class BasicSimulation extends Simulation {
 
     val init =
       exec(ws("Conn WS").open("/"))
-      .pause(5)
+      //.pause(5)
 
       .exec(ws("Ping")
       .sendText(ReqMsgs.getPingMsg.toString()))
-      .pause(10)
+      //.pause(10)
 
       .feed(tokens)
-      .exec(ws("Create User Session")
+      .exec(ws("Create User Segssion")
         .sendText(ReqMsgs.getCreateSessionMsg("${token}").toString()))
-      .pause(10)
+      //.pause(10)
 
       .exec(ws("Close WS").close)
+      //.pause(10)
   }
 
   val httpConf = http
@@ -40,7 +41,7 @@ class BasicSimulation extends Simulation {
   val scn = scenario("Test Chat (Stargate + Mercury)").exec(CreateSession.init)
 
   setUp(scn.inject(
-    atOnceUsers(10) //Injects a given number of users at once.
-    //rampUsers(100) over (60 seconds) //  Injects a given number of users with a linear ramp over a given duration.
+    atOnceUsers(100) //Injects a given number of users at once.
+    //rampUsers(1000) over (60 seconds) //  Injects a given number of users with a linear ramp over a given duration.
   ).protocols(httpConf))
 }
