@@ -11,52 +11,46 @@ class BasicSimulation extends Simulation {
 
     def closeWs() = exec(ws("Close WS").close)
 
-    def createSession() = exec(ws("Create testfriend888 Session")
-      .sendText(ReqMsgs.createSession("2fa78f7f3a844c2dbf401814390f6dec83cde93182dc4afeb3709a5a643735aa").toString()))
+    def createSession() = exec(ws("Create testfriend887 Session")
+      .sendText(ReqMsgs.createSession("1076e9f0df07423c973f1c7be3f4046536b7af68b6c2469e96a45c2ce45e2624").toString()))
       .pause(10)
 
     def getMsgs() = {
       exec(ws("Start Private Chat(get messages)")
-        .sendText(ReqMsgs.createPrivateChat("testfriend300").toString()))
+        .sendText(ReqMsgs.createPrivateChat("testfriend889").toString()))
     }
 
     def sendMsg = exec(ws("Send Private Message")
-      .sendText(ReqMsgs.privateMsg("testfriend888","testfriend300").toString()))
+      .sendText(ReqMsgs.privateMsg("testfriend887","testfriend889").toString()))
 
     def repeatSendMsg() = repeat(5) { sendMsg.pause(5) }
 
     val init = exec(conWs(), createSession(), getMsgs(), repeatSendMsg(), closeWs())
   }
 
-
   object PrivateChat {
-
-    val tokens = csv("tokens.csv").random
-    val users = csv("users.csv").random
+    val talks = csv("talks.csv").random
 
     def conWs() = exec(ws("Conn WS").open("/"))
 
     def closeWs() = exec(ws("Close WS").close)
 
-    def createSession() = feed(tokens)
-      .exec(ws("Create User Segssion")
+    def createSession() = feed(talks)
+      .exec(ws("Create Session")
       .sendText(ReqMsgs.createSession("${token}").toString()))
       .pause(10)
 
-    def getMsgs() = {
-      feed(users)
-      .exec(ws("Start Private Chat(get messages)")
-      .sendText(ReqMsgs.createPrivateChat("${user}").toString()))
-      .pause(10)
-  }
+    def getMsgs() =
+      exec(ws("Start Private Chat(get messages)")
+      .sendText(ReqMsgs.createPrivateChat("${destination}").toString()))
 
-    def repeatSendMsg = repeat(5) { sendMsg }
+    def sendMsg =
+      exec(ws("Send Private Message")
+      .sendText(ReqMsgs.privateMsg("${source}","${destination}").toString()))
 
-    def sendMsg() = exec(ws("Send Private Message")
-      .sendText(ReqMsgs.privateMsg("${user}","${user}").toString()))
-      .pause(10)
+    def repeatSendMsg() = repeat(5) { sendMsg.pause(5) }
 
-    val init = exec(conWs(), createSession(), getMsgs(), sendMsg(), closeWs())
+    val init = exec(conWs(), createSession(), getMsgs(),  repeatSendMsg(), closeWs())
   }
 
   val httpConf = http
@@ -73,8 +67,8 @@ class BasicSimulation extends Simulation {
   val scn = scenario("Test Chat (Stargate + Mercury)").exec(PrivateChat.init)
   val scn2 = scenario("Test Chat (Stargate + Mercury)").exec(OnlyOnePrivateChat.init)
 
-  setUp(scn2.inject(
-    atOnceUsers(1) //Injects a given number of users at once.
+  setUp(scn.inject(
+    atOnceUsers(5) //Injects a given number of users at once.
     //rampUsers(1000) over (60 seconds) //  Injects a given number of users with a linear ramp over a given duration.
   ).protocols(httpConf))
 }

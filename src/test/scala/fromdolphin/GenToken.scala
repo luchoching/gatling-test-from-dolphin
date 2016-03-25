@@ -12,7 +12,7 @@ object Tokens {
 
   def main(args: Array[String]): Unit = {
 
-    val nums = 100 to 105 toList
+    val nums = 800 to 810 toList
 
     val users = nums map {num => "testfriend" + num.toString}
 
@@ -31,7 +31,6 @@ object Tokens {
         ! source.equals(destination)
       } else false
     }
-    println(lines)
 
     val talkLines = ("source,token", "destination") :: lines
 
@@ -59,7 +58,8 @@ object Tokens {
         "username" -> userName,
         "password" -> "abc12345",
         "grant_type" -> "password",
-        "client_id" -> "2975114b9ffb4c25bb9da75963f1b8c1"))
+        "client_id" -> "2975114b9ffb4c25bb9da75963f1b8c1",
+        "scope" -> "chat"))
 
     request.asString.code match {
       case 200 =>
