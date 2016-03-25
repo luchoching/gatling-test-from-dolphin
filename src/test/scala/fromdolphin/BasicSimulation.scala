@@ -68,7 +68,7 @@ class BasicSimulation extends Simulation {
   val scn2 = scenario("Test Chat (Stargate + Mercury)").exec(OnlyOnePrivateChat.init)
 
   setUp(scn.inject(
-    atOnceUsers(5) //Injects a given number of users at once.
-    //rampUsers(1000) over (60 seconds) //  Injects a given number of users with a linear ramp over a given duration.
+    atOnceUsers(5), //Injects a given number of users at once.
+    rampUsers(100) over (360 seconds) //  Injects a given number of users with a linear ramp over a given duration.
   ).protocols(httpConf))
 }
