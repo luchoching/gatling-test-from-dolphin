@@ -4,25 +4,36 @@ import java.io.{File, PrintWriter}
 
 import play.api.libs.json.Json
 
+import scala.collection.mutable.ListBuffer
+import scala.util.Random
 import scalaj.http._
+
+case class Talk(source: String, destination: String, token: String)
 
 object Tokens {
 
   def main(args: Array[String]): Unit = {
 
-    val nums = 100 to 999 toList
+    val nums = 100 to 105 toList
 
     val users = nums map {num => "testfriend" + num.toString}
     val userLines = "user" :: users
 
-    val tokens = users map getAuth
-    val tokenLines = "token" :: tokens
+    // for private chat destination
+    var destinations = new ListBuffer[String]()
+    for(i <- users.indices) { destinations += users(Random.nextInt(users.size)) }
 
-    // for private chat GET_MESSAGES
+    val tokens = users map getAuth
+
+    val lines = tokens zip destinations filter(x  => ! "".equals(x._1))
+    //println(lines)
+
+    val talkLines = ("source,token", "destination") :: lines
+
     save(userLines, "users.csv")
 
-    // for CREATE_SESSION
-    save(tokenLines, "tokens.csv")
+    saveTalk(talkLines, "talks.csv")
+
   }
 
   def printToFile(f: java.io.File)(op: java.io.PrintWriter => Unit) {
@@ -34,12 +45,20 @@ object Tokens {
     printToFile(new File(fileName)) { p =>
       source foreach {line =>
         if(!"".equals(line)) {
-          println(line)
           p.println(line)
         }
       }
     }
   }
+
+  def saveTalk(lines: List[(String, String)], fileName: String) = {
+    printToFile(new File(fileName)) { p =>
+      lines foreach { line =>
+        p.println(line._1+","+line._2)
+      }
+    }
+  }
+
 
   def getAuth(userName: String) = {
     val request: HttpRequest = Http("http://localhost:8888/oauth/token")
@@ -51,7 +70,9 @@ object Tokens {
 
     request.asString.code match {
       case 200 =>
-        ( Json.parse(request.asString.body) \ "access_token").asOpt[String] getOrElse None
+        val token = ( Json.parse(request.asString.body) \ "access_token").asOpt[String] getOrElse None
+        //println(token)
+        userName+","+token
       case _ => ""
     }
   }
