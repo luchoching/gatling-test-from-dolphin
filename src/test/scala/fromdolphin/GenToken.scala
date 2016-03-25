@@ -8,8 +8,6 @@ import scala.collection.mutable.ListBuffer
 import scala.util.Random
 import scalaj.http._
 
-case class Talk(source: String, destination: String, token: String)
-
 object Tokens {
 
   def main(args: Array[String]): Unit = {
@@ -17,7 +15,6 @@ object Tokens {
     val nums = 100 to 105 toList
 
     val users = nums map {num => "testfriend" + num.toString}
-    val userLines = "user" :: users
 
     // for private chat destination
     var destinations = new ListBuffer[String]()
@@ -25,14 +22,20 @@ object Tokens {
 
     val tokens = users map getAuth
 
-    val lines = tokens zip destinations filter(x  => ! "".equals(x._1))
-    //println(lines)
+    // filter source == destination
+    val lines = tokens zip destinations filter{x  =>
+      val hasToken = ! "".equals(x._1)
+      if (hasToken) {
+        val source = x._1.split(",")(0)
+        val destination = x._2
+        ! source.equals(destination)
+      } else false
+    }
+    println(lines)
 
     val talkLines = ("source,token", "destination") :: lines
 
-    save(userLines, "users.csv")
-
-    saveTalk(talkLines, "talks.csv")
+    save(talkLines, "talks.csv")
 
   }
 
@@ -41,24 +44,14 @@ object Tokens {
     try { op(p) } finally { p.close() }
   }
 
-  def save(source: List[Any], fileName: String) = {
-    printToFile(new File(fileName)) { p =>
-      source foreach {line =>
-        if(!"".equals(line)) {
-          p.println(line)
-        }
-      }
-    }
-  }
 
-  def saveTalk(lines: List[(String, String)], fileName: String) = {
+  def save(lines: List[(String, String)], fileName: String) = {
     printToFile(new File(fileName)) { p =>
       lines foreach { line =>
         p.println(line._1+","+line._2)
       }
     }
   }
-
 
   def getAuth(userName: String) = {
     val request: HttpRequest = Http("http://localhost:8888/oauth/token")
