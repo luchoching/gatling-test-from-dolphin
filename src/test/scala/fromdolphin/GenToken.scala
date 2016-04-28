@@ -12,7 +12,7 @@ object Tokens {
 
   def main(args: Array[String]): Unit = {
 
-    val nums = 100 to 300 toList
+    val nums = 100 to 999 toList
 
     val users = nums map {num => "testfriend" + num.toString}
 

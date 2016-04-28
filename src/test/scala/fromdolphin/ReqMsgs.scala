@@ -29,6 +29,14 @@ object ReqMsgs {
     )
   }
 
+  // GET_CHATS
+  def ChatsMessage() = Json.obj(
+//    "3" -> "None", // chat_type
+//    "2" -> "None", // limit
+    "1" -> 0 // version
+  )
+
+
   //GET_MESSAGES -- create private chat room
   def privateChatMessages(destination: String) = Json.obj(
     "1" -> destination,       //chat_id
@@ -58,4 +66,6 @@ object ReqMsgs {
   def createPrivateChat(destination: String) = request(550, privateChatMessages(destination))
 
   def privateMsg(source: String, destination: String) = request(500, message(source, destination))
+
+  def getChatsMsg = request(551, ChatsMessage())
 }

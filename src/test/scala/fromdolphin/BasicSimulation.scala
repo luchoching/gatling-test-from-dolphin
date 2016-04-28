@@ -53,6 +53,27 @@ class BasicSimulation extends Simulation {
     val init = exec(conWs(), createSession(), getMsgs(),  repeatSendMsg(), closeWs())
   }
 
+  object InitUserAndGetChats {
+    val talks = csv("talks.csv").random
+
+    def conWs() = exec(ws("Conn WS").open("/"))
+
+    def closeWs() = exec(ws("Close WS").close)
+
+    def createSession() = feed(talks)
+      .exec(ws("Create Session")
+        .sendText(ReqMsgs.createSession("${token}").toString()))
+      .pause(15)
+
+    def getChats() =
+      exec(ws("Get Chats")
+      .sendText(ReqMsgs.getChatsMsg.toString()))
+
+
+    val init = exec(conWs(), createSession(), getChats(), closeWs())
+
+  }
+
   val httpConf = http
 //    .baseURL("http://localhost:8000")
 //    .acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8") // Here are the common headers
@@ -66,9 +87,10 @@ class BasicSimulation extends Simulation {
 
   val scn = scenario("Test Chat (Stargate + Mercury)").exec(PrivateChat.init)
   val scn2 = scenario("Test Chat (Stargate + Mercury)").exec(OnlyOnePrivateChat.init)
+  val initUserScn =  scenario("Test Chat (Stargate + Mercury)").exec(InitUserAndGetChats.init)
 
-  setUp(scn.inject(
-    atOnceUsers(5), //Injects a given number of users at once.
-    rampUsers(100) over (360 seconds) //  Injects a given number of users with a linear ramp over a given duration.
+  setUp(initUserScn.inject(
+    atOnceUsers(200) //Injects a given number of users at once.
+    //rampUsers(100) over (60 seconds) //  Injects a given number of users with a linear ramp over a given duration.
   ).protocols(httpConf))
 }
